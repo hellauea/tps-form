@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Details — Twinkling Petals School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Lora:wght@500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; color-scheme: light; }
+
+:root {
+  --green-900: #0f2106;
+  --green-800: #1a3a08;
+  --green-700: #2a5410;
+  --green-600: #3B6D11;
+  --green-500: #4e8c18;
+  --green-400: #639922;
+  --green-300: #97C459;
+  --green-200: #c0dd97;
+  --green-100: #e4f2d0;
+  --green-50:  #f2f9eb;
+  --bg:        #f6f9f2;
+  --white:     #ffffff;
+  --text:      #1a2e0a;
+  --text-2:    #3d5a28;
+  --text-3:    #6b8a4e;
+  --text-4:    #9db87e;
+  --border:    #c8ddb0;
+  --border-2:  #ddedc8;
+  --err:       #c0392b;
+  --err-bg:    #fdf2f2;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 80px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ───────────────────────────────────── */
+.header {
+  background: var(--green-800);
+  padding: 40px 24px 36px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(151,196,89,.08) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(151,196,89,.06) 0%, transparent 50%);
+}
+.header::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(151,196,89,.3), transparent);
+}
+.header-inner { position: relative; z-index: 1; }
+
+.school-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--green-300);
+  margin-bottom: 18px;
+}
+.school-name::before,
+.school-name::after {
+  content: '';
+  display: block;
+  width: 24px; height: 1px;
+  background: var(--green-400);
+  opacity: .5;
+}
+
+.header h1 {
+  font-family: 'Lora', serif;
+  font-size: clamp(24px, 5vw, 32px);
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.25;
+  margin-bottom: 10px;
+  letter-spacing: -.01em;
+}
+.header p {
+  font-size: 14px;
+  color: rgba(255,255,255,.5);
+  max-width: 360px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ── PROGRESS ─────────────────────────────────── */
+.progress-track {
+  height: 2px;
+  background: rgba(0,0,0,.06);
+}
+.progress-fill {
+  height: 100%;
+  background: var(--green-300);
+  width: 33.33%;
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── CONTAINER ────────────────────────────────── */
+.container {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* ── STEP INDICATOR ───────────────────────────── */
+.steps {
+  display: flex;
+  align-items: center;
+  padding: 28px 0 22px;
+}
+.step-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.step-circle {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--text-4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+}
+.step-circle.active {
+  background: var(--green-600);
+  border-color: var(--green-600);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(59,109,17,.15);
+}
+.step-circle.done {
+  background: var(--green-600);
+  border-color: var(--green-600);
+  color: #fff;
+}
+.step-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-4);
+  transition: color .3s;
+}
+.step-label.active { color: var(--green-600); font-weight: 600; }
+.step-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border-2);
+  margin: 0 8px;
+  margin-bottom: 18px;
+  transition: background .3s;
+}
+.step-line.done { background: var(--green-400); }
+
+/* ── CARD ─────────────────────────────────────── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border-2);
+  border-radius: 18px;
+  padding: 26px 22px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 4px rgba(30,60,10,.04), 0 4px 16px rgba(30,60,10,.04);
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--green-400);
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-2);
+}
+.section-label-icon {
+  width: 26px; height: 26px;
+  background: var(--green-100);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
+
+/* ── FIELDS ───────────────────────────────────── */
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+
+.field label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 7px;
+}
+.badge-req {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: var(--green-100);
+  color: var(--green-600);
+  letter-spacing: .02em;
+}
+.badge-opt {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: #f5f5f3;
+  color: #aaa;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  background: var(--white);
+  color: var(--text);
+  outline: none;
+  transition: border-color .18s, box-shadow .18s;
+  appearance: auto;
+  color-scheme: light;
+}
+.field input::placeholder { color: var(--text-4); }
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--green-500);
+  box-shadow: 0 0 0 3.5px rgba(78,140,24,.14);
+}
+.field select option { background: #fff; color: var(--text); }
+.field select:disabled { opacity: .5; cursor: not-allowed; background: var(--bg); }
+.field textarea {
+  resize: vertical;
+  min-height: 88px;
+  line-height: 1.6;
+}
+.field .hint {
+  font-size: 12px;
+  color: var(--text-4);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+.field .err {
+  font-size: 12px;
+  color: var(--err);
+  margin-top: 5px;
+  display: none;
+  align-items: center;
+  gap: 5px;
+}
+.field .err::before { content: '⚠'; font-size: 11px; }
+.field input.invalid,
+.field select.invalid {
+  border-color: var(--err) !important;
+  box-shadow: 0 0 0 3px rgba(192,57,43,.12) !important;
+}
+
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* ── RELATION TOGGLE ──────────────────────────── */
+.rel-row { display: flex; gap: 8px; }
+.rel-btn {
+  flex: 1;
+  padding: 11px 6px;
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  background: var(--white);
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  text-align: center;
+  transition: all .18s;
+}
+.rel-btn:hover {
+  background: var(--green-50);
+  border-color: var(--green-300);
+}
+.rel-btn.active {
+  background: var(--green-100);
+  border-color: var(--green-600);
+  color: var(--green-700);
+  font-weight: 600;
+}
+
+/* ── DIVIDER ──────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border-2);
+  margin: 22px 0;
+}
+
+/* ── BUTTONS ──────────────────────────────────── */
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 22px;
+  border-radius: 11px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--text-2);
+  transition: all .18s;
+  letter-spacing: .01em;
+}
+.btn:hover { background: var(--green-50); border-color: var(--green-300); }
+.btn-primary {
+  background: var(--green-600);
+  border-color: var(--green-600);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(59,109,17,.25);
+}
+.btn-primary:hover {
+  background: var(--green-700);
+  border-color: var(--green-700);
+  box-shadow: 0 4px 14px rgba(59,109,17,.3);
+  transform: translateY(-1px);
+}
+.btn-primary:active { transform: translateY(0); }
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-3);
+}
+.btn-ghost:hover {
+  background: var(--green-50);
+  border-color: var(--border);
+  color: var(--text);
+}
+.btn svg {
+  width: 15px; height: 15px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+/* ── REVIEW ───────────────────────────────────── */
+.review-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 6px;
+}
+.review-item {
+  background: var(--green-50);
+  border: 1px solid var(--border-2);
+  border-radius: 10px;
+  padding: 10px 13px;
+}
+.review-item .rl {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--text-4);
+  margin-bottom: 3px;
+}
+.review-item .rv {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── SUCCESS ──────────────────────────────────── */
+.success-screen {
+  display: none;
+  text-align: center;
+  padding: 48px 20px 20px;
+  animation: fadeUp .4s ease;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.success-circle {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--green-100);
+  border: 1.5px solid var(--green-200);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 22px;
+}
+.success-circle svg {
+  width: 30px; height: 30px;
+  stroke: var(--green-600);
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.success-screen h2 {
+  font-family: 'Lora', serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--green-800);
+  margin-bottom: 10px;
+  letter-spacing: -.02em;
+}
+.success-screen .sub {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.success-screen .desc {
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.7;
+  max-width: 310px;
+  margin: 0 auto 32px;
+}
+
+.success-note {
+  background: var(--white);
+  border: 1px solid var(--border-2);
+  border-radius: 14px;
+  padding: 18px 20px;
+  text-align: left;
+  max-width: 360px;
+  margin: 0 auto;
+}
+.success-note p {
+  font-size: 13px;
+  color: var(--text-3);
+  line-height: 1.65;
+}
+.success-note .note-dot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.success-note .dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green-300);
+  flex-shrink: 0;
+}
+.success-note .note-dot span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--green-600);
+}
+
+/* ── PANELS ───────────────────────────────────── */
+.step-panel { display: none; }
+.step-panel.active { display: block; }
+
+/* ── FOOTER ───────────────────────────────────── */
+.footer {
+  text-align: center;
+  margin-top: 32px;
+  font-size: 12px;
+  color: var(--text-4);
+  padding-bottom: 8px;
+}
+.footer span { margin: 0 6px; opacity: .4; }
+
+@media (max-width: 400px) {
+  .row2 { grid-template-columns: 1fr; }
+  .review-grid { grid-template-columns: 1fr; }
+  .card { padding: 20px 16px; }
+  .rel-btn { font-size: 12px; padding: 10px 4px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-inner">
+    <div class="school-name">Twinkling Petals School</div>
+    <h1>Student Details Form</h1>
+    <p>Fill in your child's information to set up their profile in the school system.</p>
+  </div>
+</div>
+<div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+
+<div class="container">
+
+  <!-- Step indicator -->
+  <div class="steps" id="steps-row">
+    <div class="step-dot">
+      <div class="step-circle active" id="sc1">1</div>
+      <div class="step-label active"  id="sl1">Student</div>
+    </div>
+    <div class="step-line" id="ln1"></div>
+    <div class="step-dot">
+      <div class="step-circle" id="sc2">2</div>
+      <div class="step-label" id="sl2">Parent</div>
+    </div>
+    <div class="step-line" id="ln2"></div>
+    <div class="step-dot">
+      <div class="step-circle" id="sc3">3</div>
+      <div class="step-label" id="sl3">Review</div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 1: Student ══ -->
+  <div class="step-panel active" id="panel1">
+    <div class="card">
+      <div class="section-label">
+        <div class="section-label-icon">👤</div>
+        Student details
+      </div>
+
+      <div class="field">
+        <label>Child's full name <span class="badge-req">required</span></label>
+        <input type="text" id="f-name" placeholder="e.g. Aarav Sharma" autocomplete="off">
+        <div class="err" id="e-name">Please enter your child's name.</div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Branch <span class="badge-req">required</span></label>
+          <select id="f-branch" onchange="updateClasses()">
+            <option value="">Select branch</option>
+            <option value="97ee32b9-5f26-428f-8bf2-9c11eb8a737a">Little Junior DPS — Branch 1</option>
+            <option value="753353a2-7688-423b-88cd-9b320958187e">Little Junior DPS — Branch 2</option>
+            <option value="704dc63c-2408-48f9-a2cf-9b1adeb7a428">Twinkling Petals — Branch 1</option>
+          </select>
+          <div class="err" id="e-branch">Please select a branch.</div>
+        </div>
+        <div class="field">
+          <label>Class <span class="badge-req">required</span></label>
+          <select id="f-class" disabled>
+            <option value="">Select branch first</option>
+          </select>
+          <div class="err" id="e-class">Please select a class.</div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field">
+          <label>Date of birth <span class="badge-req">required</span></label>
+          <input type="date" id="f-dob">
+          <div class="err" id="e-dob">Please enter date of birth.</div>
+        </div>
+        <div class="field">
+          <label>Admission date <span class="badge-opt">optional</span></label>
+          <input type="date" id="f-admission">
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <span></span>
+      <button class="btn btn-primary" onclick="go(2)">
+        Next
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2: Parent ══ -->
+  <div class="step-panel" id="panel2">
+    <div class="card">
+      <div class="section-label">
+        <div class="section-label-icon">👨‍👩‍👧</div>
+        Parent / guardian
+      </div>
+
+      <div class="field">
+        <label>Your full name <span class="badge-req">required</span></label>
+        <input type="text" id="f-pname" placeholder="e.g. Rajesh Sharma" autocomplete="off">
+        <div class="err" id="e-pname">Please enter your name.</div>
+      </div>
+
+      <div class="field">
+        <label>Your relation to the child <span class="badge-req">required</span></label>
+        <div class="rel-row">
+          <button type="button" class="rel-btn" id="rel-mom" onclick="setRel('Mother')">🤱 Mother</button>
+          <button type="button" class="rel-btn" id="rel-dad" onclick="setRel('Father')">👨 Father</button>
+          <button type="button" class="rel-btn" id="rel-grd" onclick="setRel('Guardian')">🛡️ Guardian</button>
+        </div>
+        <div class="err" id="e-rel">Please select your relation.</div>
+      </div>
+
+      <div class="field">
+        <label>Phone number <span class="badge-req">required</span></label>
+        <input type="tel" id="f-phone" placeholder="+91 98765 43210">
+        <div class="hint">This number will be linked to your child's account in the school app</div>
+        <div class="err" id="e-phone">Please enter a valid phone number.</div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="section-label" style="margin-bottom:18px; border:none; padding-bottom:0;">
+        <div class="section-label-icon">📞</div>
+        Emergency contact
+      </div>
+
+      <div class="field">
+        <label>Emergency contact number <span class="badge-req">required</span></label>
+        <input type="tel" id="f-emerg" placeholder="+91 98765 43210">
+        <div class="hint">Can be the same as your number or a different trusted contact</div>
+        <div class="err" id="e-emerg">Please enter a valid emergency contact.</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(1)">
+        <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back
+      </button>
+      <button class="btn btn-primary" onclick="go(3)">
+        Review
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: Review ══ -->
+  <div class="step-panel" id="panel3">
+    <div class="card">
+      <div class="section-label">
+        <div class="section-label-icon">✅</div>
+        Review your details
+      </div>
+      <p style="font-size:13px;color:var(--text-3);margin-bottom:16px;line-height:1.5">
+        Please check everything carefully before submitting.
+      </p>
+      <div class="review-grid" id="review-grid"></div>
+    </div>
+
+
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="go(2)">
+        <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back
+      </button>
+      <button class="btn btn-primary" onclick="submitForm()" id="submit-btn">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Submit
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ SUCCESS ══ -->
+  <div class="success-screen" id="success">
+    <div class="success-circle">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2>Thank you!</h2>
+    <p class="sub">Details submitted successfully.</p>
+    <p class="desc">
+      We've received your child's information and it will be added to their school profile shortly. The school admin will be in touch.
+    </p>
+
+    <div class="success-note">
+      <p>Once the TPS school app launches, you'll be able to track attendance, view posts, and manage leave requests — all from your phone.</p>
+      <div class="note-dot">
+        <div class="dot"></div>
+        <span>We'll notify you on WhatsApp when it's live</span>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:var(--text-4);margin-top:28px;">You may now close this page.</p>
+  </div>
+
+  <div class="footer">
+    Twinkling Petals School
+    <span>·</span>
+    Secure form
+    <span>·</span>
+    Data shared only with school admin
+  </div>
+
+</div>
+
+<script>
+const BRANCHES = {
+  '97ee32b9-5f26-428f-8bf2-9c11eb8a737a': {
+    name: 'Little Junior DPS — Branch 1',
+    classes: {
+      '1ee4858d-9ab0-4b4a-ad13-6715dc462e2d': 'LKG',
+      '4157be1a-9025-4068-8967-474974d1eda2': 'Nursery',
+      '6b9d45a0-c54e-4cdb-9037-206544653d12': 'Preschool',
+      'a93266d3-c10b-4b38-8bd6-ea2cd96b3219': 'UKG'
+    }
+  },
+  '753353a2-7688-423b-88cd-9b320958187e': {
+    name: 'Little Junior DPS — Branch 2',
+    classes: {
+      '7e890f81-d234-4899-914e-5cd492fe720f': 'LKG',
+      '558564b3-120b-4dfa-bd1f-a3a4fe3ff155': 'Nursery',
+      'b795050b-02bf-4ec0-9ae4-64bf9336edaf': 'Preschool',
+      '92465875-357e-473a-977a-7829b4f01ba1': 'UKG'
+    }
+  },
+  '704dc63c-2408-48f9-a2cf-9b1adeb7a428': {
+    name: 'Twinkling Petals Preschool — Branch 1',
+    classes: {
+      'ce61fdc7-cdb8-4b55-b642-61666cb9bf82': 'LKG',
+      'b306ae59-9887-4bb5-81be-0fe0cac2b09a': 'Nursery',
+      'd90baa6e-a756-42b6-8131-3f84e1603919': 'Preschool',
+      'a4feec9a-fb95-4797-8255-cad75e4a3d17': 'UKG'
+    }
+  }
+};
+
+let selectedRel = '';
+
+// Default admission date to today
+document.getElementById('f-admission').value =
+  new Date().toISOString().split('T')[0];
+
+function updateClasses() {
+  const bId = document.getElementById('f-branch').value;
+  const sel  = document.getElementById('f-class');
+  sel.innerHTML = '<option value="">Select class</option>';
+  sel.disabled  = !bId;
+  if (bId && BRANCHES[bId]) {
+    Object.entries(BRANCHES[bId].classes).forEach(([id, name]) => {
+      sel.innerHTML += `<option value="${id}">${name}</option>`;
+    });
+  }
+}
+
+function setRel(r) {
+  selectedRel = r;
+  ['mom','dad','grd'].forEach(k =>
+    document.getElementById('rel-' + k).classList.remove('active'));
+  const map = { Mother:'mom', Father:'dad', Guardian:'grd' };
+  document.getElementById('rel-' + map[r]).classList.add('active');
+  document.getElementById('e-rel').style.display = 'none';
+}
+
+function fv(id)  { return document.getElementById(id).value.trim(); }
+function se(id, show) {
+  document.getElementById(id).style.display = show ? 'flex' : 'none';
+}
+function markField(inputId, invalid) {
+  const el = document.getElementById(inputId);
+  invalid ? el.classList.add('invalid') : el.classList.remove('invalid');
+}
+function isValidPhone(v) {
+  return /^\+?[\d\s\-]{10,15}$/.test(v) && v.replace(/\D/g,'').length >= 10;
+}
+
+function validate1() {
+  const n = fv('f-name'), b = fv('f-branch'),
+        c = fv('f-class'), d = fv('f-dob');
+  se('e-name',   !n); markField('f-name',   !n);
+  se('e-branch', !b); markField('f-branch', !b);
+  se('e-class',  !c); markField('f-class',  !c);
+  se('e-dob',    !d); markField('f-dob',    !d);
+  return !!(n && b && c && d);
+}
+
+function validate2() {
+  const p  = fv('f-pname');
+  const ph = fv('f-phone');
+  const em = fv('f-emerg');
+  const phOk = ph && isValidPhone(ph);
+  const emOk = em && isValidPhone(em);
+
+  se('e-pname', !p);      markField('f-pname', !p);
+  se('e-rel',   !selectedRel);
+  se('e-phone', !phOk);   markField('f-phone', !phOk);
+  se('e-emerg', !emOk);   markField('f-emerg', !emOk);
+
+  if (ph && !phOk) document.getElementById('e-phone').textContent =
+    '⚠ Enter a valid number (min 10 digits).';
+  else if (!ph)    document.getElementById('e-phone').textContent =
+    '⚠ Phone number is required.';
+  if (em && !emOk) document.getElementById('e-emerg').textContent =
+    '⚠ Enter a valid number (min 10 digits).';
+  else if (!em)    document.getElementById('e-emerg').textContent =
+    '⚠ Emergency contact is required.';
+
+  return !!(p && selectedRel && phOk && emOk);
+}
+
+function go(n) {
+  if (n === 2 && !validate1()) return;
+  if (n === 3 && !validate2()) return;
+  if (n === 3) buildReview();
+
+  for (let i = 1; i <= 3; i++) {
+    document.getElementById('panel' + i)
+      .classList.toggle('active', i === n);
+    const sc = document.getElementById('sc' + i);
+    const sl = document.getElementById('sl' + i);
+    if (i < n) {
+      sc.className   = 'step-circle done';
+      sc.textContent = '✓';
+    } else if (i === n) {
+      sc.className   = 'step-circle active';
+      sc.textContent = i;
+    } else {
+      sc.className   = 'step-circle';
+      sc.textContent = i;
+    }
+    sl.className = 'step-label' + (i === n ? ' active' : '');
+    if (i < 3) {
+      document.getElementById('ln' + i).className =
+        'step-line' + (i < n ? ' done' : '');
+    }
+  }
+  document.getElementById('progress').style.width =
+    (n / 3 * 100) + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function buildReview() {
+  const bId = fv('f-branch'), cId = fv('f-class');
+  const bName = BRANCHES[bId]?.name || '';
+  const cName = BRANCHES[bId]?.classes[cId] || '';
+  const items = [
+    ["Child's name",     fv('f-name')],
+    ['Branch',           bName],
+    ['Class',            cName],
+    ['Date of birth',    fv('f-dob')],
+    ['Admission date',   fv('f-admission') || '—'],
+    ['Parent name',      fv('f-pname')],
+    ['Relation',         selectedRel],
+    ['Phone',            fv('f-phone')],
+    ['Emergency',        fv('f-emerg')]
+  ];
+  document.getElementById('review-grid').innerHTML = items
+    .map(([l, v]) => `
+      <div class="review-item">
+        <div class="rl">${l}</div>
+        <div class="rv" title="${v}">${v}</div>
+      </div>`)
+    .join('');
+}
+
+function showSuccess() {
+  for (let i = 1; i <= 3; i++)
+    document.getElementById('panel' + i).classList.remove('active');
+  document.getElementById('steps-row').style.display = 'none';
+  document.getElementById('progress').style.width = '100%';
+  document.getElementById('success').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+const API = 'https://tps-backend-52u6.onrender.com';
+
+function submitForm() {
+  const bId = fv('f-branch'), cId = fv('f-class');
+  const btn = document.getElementById('submit-btn');
+
+  const payload = {
+    student_name:      fv('f-name'),
+    branch_id:         bId,
+    class_id:          cId,
+    date_of_birth:     fv('f-dob'),
+    admission_date:    fv('f-admission'),
+    parent_name:       fv('f-pname'),
+    relation:          selectedRel,
+    phone:             fv('f-phone'),
+    emergency_contact: fv('f-emerg')
+  };
+
+  btn.disabled = true;
+  btn.innerHTML = 'Submitting…';
+
+  fetch(API + '/public/enroll', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body:    JSON.stringify(payload)
+  })
+  .then(async r => {
+    const data = await r.json();
+    if (r.ok && data.success) {
+      showSuccess();
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg> Submit';
+      alert(data.error || 'Something went wrong. Please try again.');
+    }
+  })
+  .catch(() => {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" style="width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg> Submit';
+    alert('Network error. Please check your connection and try again.');
+  });
+}
+</script>
+</body>
+</html>
